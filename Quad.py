@@ -10,7 +10,6 @@ class Quad:
         self.min_width = 2
         self.divided = False
         self.display()
-        self.check_points()
 
     def display(self):
         self.canvas.create_line((self.x, self.y, self.x + self.width, self.y), fill = "#646464")
@@ -24,19 +23,22 @@ class Quad:
                 child.add_points(points)
         else:
             for point in points:
+                #  If point is in self
                 if self.x < point.x <= self.x + self.width and self.y < point.y <= self.y + self.width:
                     self.points.append(point)
             self.check_points()
 
     def divide(self):
         self.divided = True
+        #  Create 4 smaller children quads inside self
         self.children.append(Quad(self.canvas, self.x, self.y, self.width / 2))
         self.children.append(Quad(self.canvas, self.x + self.width / 2, self.y, self.width / 2))
         self.children.append(Quad(self.canvas, self.x, self.y + self.width / 2, self.width / 2))
         self.children.append(Quad(self.canvas, self.x + self.width / 2, self.y + self.width / 2, self.width / 2))
-
+        #  Move points from self to children
         for child in self.children:
             child.add_points(self.points)
+        self.points.clear()
 
     def check_points(self):
         if len(self.points) > self.max_points and self.width > self.min_width:
@@ -44,13 +46,14 @@ class Quad:
 
     def find_points(self, rectangle):
         points_in_rectangle = []
+        #  Check if rectangle intersects self
         if not(rectangle.min_x > self.x + self.width or rectangle.max_x < self.x or rectangle.min_y > self.y + self.width or rectangle.max_y < self.y):
-
             if self.divided:
                 for child in self.children:
                     points_in_rectangle += child.find_points(rectangle)
             else:
                 for point in self.points:
+                    #  Check if point is in rectangle
                     if rectangle.min_x < point.x < rectangle.max_x and rectangle.min_y < point.y < rectangle.max_y:
                         points_in_rectangle.append(point)
 
