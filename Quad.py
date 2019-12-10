@@ -6,7 +6,7 @@ class Quad:
         self.width = width
         self.points = []
         self.children = []
-        self.max_points = 2
+        self.max_points = 4
         self.min_width = 2
         self.divided = False
         self.display()
@@ -30,14 +30,11 @@ class Quad:
 
     def divide(self):
         self.divided = True
-        NW = Quad(self.canvas, self.x, self.y, self.width / 2)
-        NE = Quad(self.canvas, self.x + self.width / 2, self.y, self.width / 2)
-        SW = Quad(self.canvas, self.x, self.y + self.width / 2, self.width / 2)
-        SE = Quad(self.canvas, self.x + self.width / 2, self.y + self.width / 2, self.width / 2)
-        self.children.append(NW)
-        self.children.append(NE)
-        self.children.append(SW)
-        self.children.append(SE)
+        self.children.append(Quad(self.canvas, self.x, self.y, self.width / 2))
+        self.children.append(Quad(self.canvas, self.x + self.width / 2, self.y, self.width / 2))
+        self.children.append(Quad(self.canvas, self.x, self.y + self.width / 2, self.width / 2))
+        self.children.append(Quad(self.canvas, self.x + self.width / 2, self.y + self.width / 2, self.width / 2))
+
         for child in self.children:
             child.add_points(self.points)
 
@@ -51,8 +48,7 @@ class Quad:
 
             if self.divided:
                 for child in self.children:
-                    points_temp = child.find_points(rectangle)
-                    points_in_rectangle += points_temp
+                    points_in_rectangle += child.find_points(rectangle)
             else:
                 for point in self.points:
                     if rectangle.min_x < point.x < rectangle.max_x and rectangle.min_y < point.y < rectangle.max_y:
