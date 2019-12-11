@@ -16,3 +16,11 @@ Quadtree point selection (idk what to call it). I'm now using PyCharm instead of
 
 	Quadtree.py
 	Quad.py
+
+-Dec 11 2019
+Trying out pygame by making minesweeper, unfinished version atm.
+	MineSweeper.py
+	Images
+		Tile_hidden.png
+		Tile_mine.png
+		Tile_revealed.png
