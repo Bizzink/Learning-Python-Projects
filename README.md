@@ -19,8 +19,19 @@ Quadtree point selection (idk what to call it). I'm now using PyCharm instead of
 
 -Dec 11 2019
 Trying out pygame by making minesweeper, unfinished version atm.
+
 	MineSweeper.py
 	Images
 		Tile_hidden.png
 		Tile_mine.png
 		Tile_revealed.png
+
+-Dec 12 2019
+Continuing Minesweeper work, its mostly functional now.
+Moved Minesweeper + resources to its own folder	
+
+	Minesweeper
+		Images...
+		Gotham_Black.ttf
+		MineSweeper.py
+		
