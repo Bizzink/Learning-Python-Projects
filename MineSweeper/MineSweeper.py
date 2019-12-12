@@ -10,10 +10,14 @@ class Tile:
         self.size = size
         self.bomb = False
         self.revealed = False
+        self.flagged = False
         self.image = pg.image.load("images\\Tile_hidden.png").convert()
-        self.image = pg.transform.scale(self.image, (size, size))
+        self.update()
+
+    def update(self):
+        self.image = pg.transform.scale(self.image, (self.size, self.size))
         self.rect = self.image.get_rect()
-        self.rect = self.rect.move((col * size, row * size))
+        self.rect = self.rect.move((self.col * self.size, self.row * self.size))
         screen.blit(self.image, self.rect)
 
     def get_neighbours(self):
@@ -46,40 +50,30 @@ class Tile:
         return near
 
     def reveal(self):
-        global tiles  # , rows, cols
-        if self.bomb:
-            self.image = pg.image.load("images\\Tile_mine.png").convert()
-        else:
-            self.image = pg.image.load("images\\Tile_revealed.png").convert()
+        global tiles
+        if not self.flagged:
+            if self.bomb:
+                self.image = pg.image.load("images\\Tile_mine.png").convert()
+            else:
+                image_name = "images\\Tile_revealed_" + str(self.count_near_bombs()) + ".png"
+                self.image = pg.image.load(image_name).convert()
 
-        self.image = pg.transform.scale(self.image, (self.size, self.size))
-        self.rect = self.image.get_rect()
-        self.rect = self.rect.move((self.col * self.size, self.row * self.size))
-        screen.blit(self.image, self.rect)
-
-        self.revealed = True
-
-        """neighbours = []
-        if self.col > 0: neighbours.append(tiles[self.row][self.col - 1])
-        if self.row > 0: neighbours.append(tiles[self.row - 1][self.col])
-        if self.col < cols - 1: neighbours.append(tiles[self.row][self.col + 1])
-        if self.row < rows - 1: neighbours.append(tiles[self.row + 1][self.col])"""
+            self.update()
+            self.revealed = True
 
         if self.count_near_bombs() == 0:
-            neighbours = self.get_neighbours()
+            for neighbour in self.get_neighbours():
+                if not neighbour.revealed and not neighbour.bomb: neighbour.reveal()
 
-            for neighbour in neighbours:
-                if not neighbour.revealed and not neighbour.bomb:
-                    neighbour.reveal()
+    def toggle_flag(self):
+        if self.flagged:
+            self.flagged = False
+            self.image = pg.image.load("images\\Tile_hidden.png").convert()
+        else:
+            self.flagged = True
+            self.image = pg.image.load("images\\Tile_flagged.png").convert()
 
-
-def spread_bombs(count):
-    global tiles
-    while count > 0:
-        chosen_tile = tiles[randint(0, rows - 1)][randint(0, cols - 1)]
-        if not chosen_tile.bomb:
-            chosen_tile.bomb = True
-            count -= 1
+        self.update()
 
 
 def create_tiles(rows, cols):
@@ -93,17 +87,68 @@ def create_tiles(rows, cols):
     return tile_array
 
 
+def spread_bombs(count, excluded_tile):
+    global tiles
+    excluded_tiles = excluded_tile.get_neighbours()
+    excluded_tiles.append(excluded_tile)
+
+    while count > 0:
+        chosen_tile = tiles[randint(0, rows - 1)][randint(0, cols - 1)]
+        if not chosen_tile.bomb and chosen_tile not in excluded_tiles:
+            chosen_tile.bomb = True
+            count -= 1
+
+
+def tiles_left():
+    global tiles
+    #  count number of remaining hidden tiles
+    remaining = 0
+    for row in tiles:
+        for tile in row:
+            if not tile.revealed: remaining += 1
+
+    return remaining
+
+
+def game_over(set_state, text):
+    global state
+    for row in tiles:
+        for tile in row:
+            if tile.flagged: tile.toggle_flag()
+            tile.reveal()
+
+    font = pg.font.Font("Gotham_Black.ttf", 100)
+    title = font.render(text, True, (200, 255, 200))
+    title_rect = title.get_rect()
+    title_rect.center = (300, 300)
+    screen.blit(title, title_rect)
+
+    state = set_state
+
+
+def restart():
+    global state, first_click
+    global tiles
+    tiles.clear()
+    first_click = True
+    tiles = create_tiles(rows, cols)
+
+    state = "PLAYING"
+
+
 pg.init()
 
-screen_size = width, height = 600, 650
+screen_size = width, height = 600, 600
 screen = pg.display.set_mode(screen_size)
+pg.display.set_caption("Minesweeper")
 
-rows = 10
-cols = 10
-bomb_count = 10
-
+rows = 20
+cols = 20
+bomb_count = 60
+first_click = True
+playing = True
 tiles = create_tiles(rows, cols)
-spread_bombs(bomb_count)
+state = "PLAYING"
 
 while True:
     for event in pg.event.get():
@@ -116,8 +161,27 @@ while True:
             for row in tiles:
                 for tile in row:
                     if tile.rect.collidepoint(mouse_pos):
-                        if not tile.revealed:
-                            tile.reveal()
-                            n = tile.get_neighbours()
+
+                        #  left click
+                        if event.button == 1:
+                            if first_click:
+                                spread_bombs(bomb_count, tile)
+                                tile.reveal()
+                                first_click = False
+                            elif not tile.revealed:
+                                tile.reveal()
+                                if tile.bomb: game_over("LOSE", "LOSE!")
+
+                        #  right click
+                        elif event.button == 3:
+                            if not tile.revealed: tile.toggle_flag()
+
+        if event.type == pg.KEYDOWN:
+            #  Enter
+            if event.key == 13 and not state == "PLAYING":
+                restart()
+
+    if tiles_left() == bomb_count:
+        game_over("WIN", "WIN!")
 
     pg.display.flip()
