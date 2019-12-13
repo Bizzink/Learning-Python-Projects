@@ -1,0 +1,15 @@
+width = 0
+height = 0
+controls_height = 0
+rows = 0
+cols = 0
+tiles = []
+buttons = []
+screen = None
+clock = None
+flags_remaining = None
+settings_open = False
+state = "PLAYING"
+pause_time = 0
+flag_count = 0
+bomb_count = 0
