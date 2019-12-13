@@ -35,3 +35,10 @@ Moved Minesweeper + resources to its own folder
 		Gotham_Black.ttf
 		MineSweeper.py
 		
+-Dec 13 2019
+Update to minesweeper, moved some things to different files, needs refactoring
+Its mostly functional, settings ui needs to be added, things meed to look nicer
+	
+	Tile.py
+	UI.py
+	Globals.py
