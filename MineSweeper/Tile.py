@@ -24,8 +24,7 @@ class Tile:
         g.screen.blit(self.image, self.rect)
 
     def get_neighbours(self):
-        #  Get 8 surrounding neighbours
-        #  If at an edge, ignore nonexistent neighbours
+        """Get 8 surrounding neighbours. If at an edge, ignore nonexistent neighbours"""
         near_tiles = []
 
         near_rows = g.tiles[self.row - 1: self.row + 2]
