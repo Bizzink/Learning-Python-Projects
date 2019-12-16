@@ -7,8 +7,14 @@ import UI
 g.rows = 20
 g.cols = 20
 g.bomb_count = 50
+g.remaining_bombs = g.bomb_count
 g.controls_height = 50
 setrecursionlimit(1500)
+
+# TODO: change board size
+#   save / load
+#   assist
+#   make things look good
 
 pg.init()
 
@@ -32,7 +38,18 @@ while True:
             if UI.menu.rect.collidepoint(mouse_pos):
                 UI.menu.action()
 
-            if g.state == "PLAYING":
+            if g.state == "PAUSED" or g.state == "GAME_OVER":
+                for button in UI.menu_buttons:
+                    if button.rect.collidepoint(mouse_pos):
+                        button.action()
+
+                for choose in UI.menu_choose:
+                    if choose.up.rect.collidepoint(mouse_pos):
+                        choose.increase()
+                    elif choose.down.rect.collidepoint(mouse_pos):
+                        choose.decrease()
+
+            elif g.state == "PLAYING":
                 for row in g.tiles:
                     for tile in row:
                         if tile.rect.collidepoint(mouse_pos):
@@ -40,13 +57,13 @@ while True:
                             #  left click
                             if event.button == 1:
                                 if g.first_click:
-                                    g.spread_bombs(g.bomb_count, tile)
+                                    g.spread_bombs(g.remaining_bombs, tile)
                                     tile.reveal()
                                     UI.timer.start_time = time()
                                     g.first_click = False
                                 elif not tile.revealed:
                                     tile.reveal()
-                                    if tile.bomb and not tile.flagged: g.game_over("LOSE!")
+                                    if tile.bomb and not tile.flagged: g.game_over("LOSE!", colour = (255, 100, 100))
 
                             #  right click
                             elif event.button == 3:
@@ -63,7 +80,7 @@ while True:
     if g.state == "PLAYING" and not g.first_click:
         UI.timer.update()
 
-    if g.tiles_left() == g.bomb_count:
-        g.game_over("WIN!")
+    if g.tiles_left() == g.remaining_bombs:
+        g.game_over("WIN!", colour = (100, 255, 150))
 
     pg.display.flip()

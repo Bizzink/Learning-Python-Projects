@@ -7,6 +7,7 @@ import pygame as pg
 #  Variables
 
 
+font = "Retro_Gaming.ttf"
 width = 0
 height = 0
 controls_height = 0
@@ -15,11 +16,14 @@ cols = 0
 tiles = []
 screen = None
 first_click = True
+menu_open = False
 state = "PLAYING"
 flags_remaining = 0
 pause_time = 0
 flag_count = 0
+remaining_bombs = 0
 bomb_count = 0
+menu_colour = (75, 75, 100)
 
 #  Functions
 
@@ -70,50 +74,63 @@ def game_over(text, colour = (255, 255, 255)):
             tile.reveal()
 
     overlay = pg.Surface((width, height - controls_height))
-    overlay.set_alpha(100)
+    overlay.set_alpha(200)
     overlay.fill((0, 0, 0))
     screen.blit(overlay, (0, controls_height))
 
-    font = pg.font.Font("Gotham_Black.ttf", width // 5)
-    title = font.render(text, True, colour)
-    title_rect = title.get_rect()
-    title_rect.center = (width // 2, height // 2)
-    screen.blit(title, title_rect)
+    UI.Title(text, width // 5, (width //2, height // 2), colour = colour).draw()
+    UI.Title("PRESS ENTER TO RESTART", width // 20, (width // 2, height // 2 + width // 10)).draw()
 
-    state = "PAUSED"
+    state = "GAME_OVER"
 
 
 def restart():
     """Resets the board and game state"""
-    global first_click, tiles, state
+    global first_click, tiles, state, bomb_count, remaining_bombs, flag_count, menu_open, rows, cols
 
+    if bomb_count > rows * cols // 4:
+        bomb_count = rows * cols // 4
+
+    remaining_bombs = bomb_count
+    flag_count = 0
     tiles.clear()
-    UI.init()
     tiles = create_tiles(rows, cols)
     first_click = True
+    menu_open = False
     state = "PLAYING"
+    UI.init()
 
 
 def menu():
     """Displays the menu"""
-    global state, pause_time
+    global state, pause_time, menu_open, menu_colour
 
     background = pg.Rect(0, 0, width // 3, height // 4)
     background.center = (width // 2, height // 2)
-    pg.draw.rect(screen, (150, 150, 150), background)
+    pg.draw.rect(screen, menu_colour, background)
 
     for button in UI.menu_buttons:
         button.draw()
 
+    for choose in UI.menu_choose:
+        choose.draw()
+
     pause_time = time()
-    state = "PAUSED"
+
+    if state != "GAME_OVER":
+        state = "PAUSED"
+    menu_open = True
 
 
 def close_menu():
-    global state
+    global state, menu_open
     for row in tiles:
         for tile in row:
             tile.update()
 
     UI.timer.start_time += (time() - pause_time)
-    state = "PLAYING"
+
+    if state != "GAME_OVER":
+        state = "PLAYING"
+
+    menu_open = False
