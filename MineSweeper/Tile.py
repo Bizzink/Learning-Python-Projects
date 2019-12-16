@@ -1,5 +1,6 @@
 import pygame as pg
 import Globals as g
+from time import sleep
 
 
 class Tile:
@@ -61,6 +62,9 @@ class Tile:
             self.update()
             self.revealed = True
 
+            #  sleep(0.01)
+            #  pg.display.flip()
+
         if self.count_near_bombs() == 0:
             for neighbour in self.get_neighbours():
                 if not neighbour.revealed and not neighbour.bomb: neighbour.reveal()
@@ -76,3 +80,11 @@ class Tile:
             g.flag_count += 1
 
         self.update()
+
+    def highlight(self, colour, reset = False):
+        self.update()
+        if not reset:
+            overlay = pg.Surface((self.size, self.size))
+            overlay.set_alpha(75)
+            overlay.fill(colour)
+            g.screen.blit(overlay, (self.col * self.size, (self.row * self.size) + g.controls_height))

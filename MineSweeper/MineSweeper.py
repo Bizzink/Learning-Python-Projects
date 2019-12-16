@@ -11,10 +11,9 @@ g.remaining_bombs = g.bomb_count
 g.controls_height = 50
 setrecursionlimit(1500)
 
-# TODO: change board size
+# TODO:
 #   save / load
 #   assist
-#   make things look good
 
 pg.init()
 

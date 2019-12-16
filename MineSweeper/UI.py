@@ -16,11 +16,12 @@ def init():
     menu = MenuButton("IMAGE", "menu.png", (int(g.controls_height // 1.25), g.controls_height // 2), int(g.controls_height // 1.25))
     menu.draw()
 
-    menu_buttons.append(CloseMenuButton("IMAGE", "close.png", (g.width // 2 - g.width // 7, g.height // 2 - g.height // 10 ), 30))
-    menu_buttons.append(ResetButton("TEXT", "Reset", (g.width // 2, g.height // 2 + 50), 40))
+    menu_buttons.append(CloseMenuButton("IMAGE", "close.png", (g.width // 2 - int(g.width // 5.5), g.height // 2 - g.height // 10), 30))
+    menu_buttons.append(ResetButton("TEXT", "Reset", (g.width // 2, g.height // 2 + 20), 40))
+    menu_buttons.append(AssistButton("TEXT", "Assist", (g.width // 2, g.height // 2 + 70), 40))
 
-    menu_choose.append(ChooseBombCount("Bombs", 5, g.rows * g.cols // 2, g.bomb_count, 5, (g.width // 2, g.height // 2 - 50), 40))
-    menu_choose.append(ChooseBoardSize("Size", 10, 30, 20, 5, (g.width // 2, g.height // 2), 40))
+    menu_choose.append(ChooseBombCount("Bombs", 5, g.rows * g.cols // 2, g.bomb_count, 5, (g.width // 2 - g.width // 16, g.height // 2 - 80), 40))
+    menu_choose.append(ChooseBoardSize("Size", 10, 30, 20, 5, (g.width // 2 - g.width // 16, g.height // 2 - 30), 40))
 
 
 class Timer:
@@ -128,13 +129,13 @@ class ChooseValue:
     def __init__(self, text, min_val, max_val, start_val, step, center, size):
         self.title = Title(text, size, center)
         title_width = self.title.display.get_size()[0]
-        self.up = Button("IMAGE", "arrow.png", (center[0] + title_width // 2 + size // 2, center[1] - size // 4), size // 2, width = size)
-        self.down = Button("IMAGE", "arrow.png", (center[0] + title_width // 2 + size // 2, center[1] + size // 4), size // 2, width = size)
+        self.up = Button("IMAGE", "arrow.png", (center[0] + title_width // 2 + size // 2 + 10, center[1] - size // 4), size // 2, width = size)
+        self.down = Button("IMAGE", "arrow.png", (center[0] + title_width // 2 + size // 2 + 10, center[1] + size // 4), size // 2, width = size)
         self.down.display = pg.transform.flip(self.down.display, False, True)
 
         self.min, self.max, self.step = min_val, max_val, step
 
-        self.value = Title(str(start_val), size // 2, (center[0] + title_width // 2 + int(size * 1.5), center[1]), has_bg = True, background = g.menu_colour)
+        self.value = Title(str(start_val), size // 2, (center[0] + title_width // 2 + size * 2, center[1]), has_bg = True, background = g.menu_colour)
 
     def draw(self):
         self.title.draw()
@@ -177,6 +178,17 @@ class ResetButton(Button):
     def action(self):
         if g.state == "PAUSED" or g.state == "GAME_OVER":
             g.restart()
+
+
+class AssistButton(Button):
+    def __init__(self, button_type, text, center, size):
+        super().__init__(button_type, text, center, size)
+
+    def action(self):
+        if g.assist:
+            g.assist = False
+        else:
+            g.assist = True
 
 
 class ChooseBombCount(ChooseValue):

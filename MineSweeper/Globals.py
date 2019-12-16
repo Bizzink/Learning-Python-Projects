@@ -1,4 +1,4 @@
-from time import time
+from time import time, sleep
 from Tile import Tile
 from random import randint
 import UI
@@ -14,6 +14,7 @@ controls_height = 0
 rows = 0
 cols = 0
 tiles = []
+assist = False
 screen = None
 first_click = True
 menu_open = False
@@ -50,7 +51,11 @@ def spread_bombs(count, excluded_tile):
         chosen_tile = tiles[randint(0, rows - 1)][randint(0, cols - 1)]
         if not chosen_tile.bomb and chosen_tile not in excluded_tiles:
             chosen_tile.bomb = True
+            #  chosen_tile.highlight((255, 50, 50))
             count -= 1
+
+        #  sleep(0.01)
+        #  pg.display.flip()
 
 
 def tiles_left():
@@ -105,7 +110,7 @@ def menu():
     """Displays the menu"""
     global state, pause_time, menu_open, menu_colour
 
-    background = pg.Rect(0, 0, width // 3, height // 4)
+    background = pg.Rect(0, 0, int(width // 2.5), height // 4)
     background.center = (width // 2, height // 2)
     pg.draw.rect(screen, menu_colour, background)
 
