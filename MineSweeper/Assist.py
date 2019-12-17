@@ -1,7 +1,5 @@
 import Globals as g
 
-board = []
-
 
 class RestrictedTile:
     def __init__(self, pos, revealed, flagged, near_bombs):
@@ -20,8 +18,14 @@ class RestrictedTile:
         neighbours = []
 
         rows = board[self.row - 1: self.row + 2]
+        if self.row == 0: rows = board[self.row: self.row + 2]
+        if self.row == g.rows - 1: rows = board[self.row - 1: self.row + 1]
+
         for row in rows:
             tiles = row[self.col - 1: self.col + 2]
+            if self.col == 0: tiles = row[self.col : self.col + 2]
+            if self.col == g.cols: tiles = row[self.col - 1: self.col + 1]
+
             for tile in tiles:
                 neighbours.append(tile)
 
@@ -70,6 +74,8 @@ class RestrictedTile:
         if self.near_bombs - self.near_flags() < 0:
             #  more flags than bombs
             # this will highlight flagged tiles
+            self.override = -3
+
             for tile in self.get_neighbours():
                 if tile.flagged:
                     tile.override = -2
@@ -88,6 +94,9 @@ class RestrictedTile:
             result += value
 
         return result / len(self.potentials)
+
+
+board = []
 
 
 def get_board():
@@ -115,6 +124,8 @@ def update_potentials():
         for tile in row:
             if tile.override == -2:
                 g.tiles[tile.row][tile.col].highlight((255, 0, 255), 75)
+            elif tile.override == -3:
+                g.tiles[tile.row][tile.col].highlight((255, 0, 255), 10)
 
             elif len(tile.potentials) > 0 and not tile.revealed:
                 tile.calc_potential()
