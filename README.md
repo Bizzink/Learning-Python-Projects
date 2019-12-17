@@ -42,3 +42,10 @@ Its mostly functional, settings ui needs to be added, things meed to look nicer
 	Tile.py
 	UI.py
 	Globals.py
+
+-Dec 17 2019
+Kinda gave up logging all the changes, minesweeper is pretty much done, might clean it up a bit.
+It now has a menu and an assist feature which gives likeyhood of a tile being a bomb
+
+	Assist.py
+	Retro_gaming.ttf
