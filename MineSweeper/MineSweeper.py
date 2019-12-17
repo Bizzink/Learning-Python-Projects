@@ -3,6 +3,7 @@ from time import time
 import pygame as pg
 import Globals as g
 import UI
+from Assist import update_potentials
 
 g.rows = 20
 g.cols = 20
@@ -13,7 +14,6 @@ setrecursionlimit(1500)
 
 # TODO:
 #   save / load
-#   assist
 
 pg.init()
 
@@ -68,6 +68,9 @@ while True:
                             elif event.button == 3:
                                 if not tile.revealed and not g.first_click: tile.toggle_flag()
                                 g.flags_remaining.update()
+
+                if g.assist and g.state != "GAME_OVER":
+                    update_potentials()
 
         if event.type == pg.KEYDOWN:
             #  Enter
