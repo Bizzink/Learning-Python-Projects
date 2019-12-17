@@ -98,8 +98,8 @@ class Title:
 
 
 class Button:
-    def __init__(self, button_type, text, center, height, width = -1, colour=(255, 255, 255)):
-        self.type, self.center, self.height = button_type, center, height
+    def __init__(self, button_type, text, center, height, width = -1, colour=(255, 255, 255), background = (50, 50, 75)):
+        self.type, self.center, self.height, self.background = button_type, center, height, background
 
         if width == -1:
             width = height
@@ -118,7 +118,7 @@ class Button:
 
     def draw(self):
         if self.type == "TEXT":
-            pg.draw.rect(g.screen, (50, 50, 75), self.rect)
+            pg.draw.rect(g.screen, self.background, self.rect)
         g.screen.blit(self.display, self.rect)
 
     def action(self):
@@ -187,8 +187,12 @@ class AssistButton(Button):
     def action(self):
         if g.assist:
             g.assist = False
+            self.background = (50, 50, 75)
+            self.draw()
         else:
             g.assist = True
+            self.background = (100, 100, 125)
+            self.draw()
 
 
 class ChooseBombCount(ChooseValue):

@@ -3,6 +3,7 @@ from Tile import Tile
 from random import randint
 import UI
 import pygame as pg
+from Assist import update_potentials
 
 #  Variables
 
@@ -25,6 +26,8 @@ flag_count = 0
 remaining_bombs = 0
 bomb_count = 0
 menu_colour = (75, 75, 100)
+
+slowdown = False
 
 #  Functions
 
@@ -51,11 +54,12 @@ def spread_bombs(count, excluded_tile):
         chosen_tile = tiles[randint(0, rows - 1)][randint(0, cols - 1)]
         if not chosen_tile.bomb and chosen_tile not in excluded_tiles:
             chosen_tile.bomb = True
-            #  chosen_tile.highlight((255, 50, 50))
             count -= 1
 
-        #  sleep(0.01)
-        #  pg.display.flip()
+        if slowdown:
+            chosen_tile.highlight((255, 50, 50))
+            sleep(0.01)
+            pg.display.flip()
 
 
 def tiles_left():
@@ -132,6 +136,9 @@ def close_menu():
     for row in tiles:
         for tile in row:
             tile.update()
+
+    if assist:
+        update_potentials()
 
     UI.timer.start_time += (time() - pause_time)
 

@@ -62,8 +62,9 @@ class Tile:
             self.update()
             self.revealed = True
 
-            #  sleep(0.01)
-            #  pg.display.flip()
+            if g.slowdown:
+                sleep(0.01)
+                pg.display.flip()
 
         if self.count_near_bombs() == 0:
             for neighbour in self.get_neighbours():
@@ -81,10 +82,10 @@ class Tile:
 
         self.update()
 
-    def highlight(self, colour, reset = False):
+    def highlight(self, colour, opacity, reset = False, b = False):
         self.update()
         if not reset:
             overlay = pg.Surface((self.size, self.size))
-            overlay.set_alpha(75)
+            overlay.set_alpha(opacity)
             overlay.fill(colour)
             g.screen.blit(overlay, (self.col * self.size, (self.row * self.size) + g.controls_height))
