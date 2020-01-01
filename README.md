@@ -49,3 +49,6 @@ It now has a menu and an assist feature which gives likeyhood of a tile being a 
 
 	Assist.py
 	Retro_gaming.ttf
+
+-Jan 1 2020
+Word solver quickly made for winning some mobile game, the one where theres a circle of letters and you have to make words with them
