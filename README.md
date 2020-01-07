@@ -1,4 +1,7 @@
 # Learning-Python-Projects
+
+DONT READ THIS IT SUCKS
+
 Basic projects im doing to learn python
 Im probalby going to do this like a journal so i can look back at it and think "  cool" and nothing else
 
